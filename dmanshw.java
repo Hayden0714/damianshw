@@ -1,6 +1,7 @@
 package damianshw;
 import java.util.Scanner;
 
+//testing to see if this comment made it in
 public class dmanshw {
 
 	//the main array
@@ -24,7 +25,10 @@ public class dmanshw {
 			
 			//ask the user what they want to do
 			Scanner in = new Scanner(System.in);
-			System.out.println("Please choose between the 3 options: \n0 - Add a stock to the database\n1 - Get statistics about a stock\n2 - Exit the program");
+			System.out.println("Please choose between the 3 options: 
+			\n0 - Add a stock to the database
+			\n1 - Get statistics about a stock
+			\n2 - Exit the program");
 			int userinput = in.nextInt();
 			
 			//switch statement to decide what to do
@@ -101,7 +105,7 @@ public class dmanshw {
 			int num = 0;
 			for(int i = 0; i < stockArry.length; i ++)
 			{
-				if(stockArray[i].getSymbol().equals(stocksymbol))
+				if(stockArray[i].getSymbol().equalsIgnoreCase(stocksymbol))
 				{
 					num = i;
 				}
@@ -122,7 +126,7 @@ public class dmanshw {
 		
 		//find that stock in the array
 		for(Stock x : arr) {
-			if(x.getSymbol().equals(next)) {
+			if(x.getSymbol().equalsIgnoreCase(next)) {
 				//ask the user for the current price of the stock
 				System.out.println("What is the current price of this stock?");
 				double next1 = input.nextDouble();

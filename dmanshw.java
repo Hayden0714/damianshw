@@ -45,7 +45,9 @@ public class dmanshw {
 			// add the string to be shown
 
 			// get an answer from the user
-			int choice = getIntegerInput(true, 0, true, 3, "Please choose between the 3 options: \n0 - Add a stock to the database \n1 - Get statistics about a stock\n2 - Export the stocks to a file\n3 - Exit the program\n\nPlease enter your choice: ", "That is not a valid input");
+			int choice = getIntegerInput(true, 0, true, 3,
+					"Please choose between the 3 options: \n0 - Add a stock to the database \n1 - Get statistics about a stock\n2 - Export the stocks to a file\n3 - Exit the program\n\nPlease enter your choice: ",
+					"That is not a valid input");
 
 			// switch statement to decide what to do
 			switch (choice) {
@@ -149,8 +151,7 @@ public class dmanshw {
 				// read the file and put each line into an array
 				String read;
 				while ((read = fileReader.readLine()) != null) {
-					// testing
-					System.out.println("The line that is being read in is: " + read);
+					
 
 					// split the line up
 					String[] line = read.split(",");
@@ -167,10 +168,10 @@ public class dmanshw {
 
 					// then set all of the array indexes to variables to construct a stock object
 					String name = line[0].trim();
-					System.out.println(name);
+					
 
 					String symbol = line[1].trim();
-					System.out.println(symbol);
+					
 					double lastPrice = Double.parseDouble(line[2].trim());
 
 					double yearLow = Double.parseDouble(line[3].trim());
@@ -196,17 +197,7 @@ public class dmanshw {
 			}
 		}
 
-		// print the stock list to test if everything is there
-		/*
-		 * for(Stock var : stockList)
-		 * {
-		 * System.out.println("name of the stock is: " + var.name);
-		 * System.out.println("symbol of the stock is: " + var.symbol);
-		 * System.out.println("last price of the stock is" + var.lastPrice);
-		 * System.out.println("highprice of the stock is " + var.yearHigh);
-		 * System.out.println("lowprice of the stock is" + var.yearLow);
-		 * }
-		 */
+		
 	}
 
 	// method to export the data from the array in to a file
@@ -224,15 +215,14 @@ public class dmanshw {
 
 			for (Stock x : stockList) {
 				// write each element of the stock to the file separated by a comma and a space
-				writer.write(x.getName() + ", " + x.getSymbol() + ", " + x.getLastPrice() + ", " + x.getYearLow() + ", "
+				writer.write(x.getName() + ", " + x.getSymbol() + ", " + x.getLastPrice() + ", " + x.getYearLow() + ","
 						+ x.getYearHigh());
 
-				// DO THE SAME THING WITH PRINT OUT TO TEST
-				System.out.println(x.name + ", " + x.symbol + ", " + x.lastPrice + ", " + x.yearLow + ", " + x.yearHigh);
+				
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
-		}catch (NullPointerException n){
+		} catch (NullPointerException n) {
 			n.printStackTrace();
 		}
 	}

@@ -1,51 +1,76 @@
 package damianshw;
+
 import java.util.Scanner;
+
+import javax.print.attribute.standard.JobHoldUntil;
+import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
+
+import java.io.BufferedReader;
+import java.io.File;
+import javax.swing.filechooser.FileSystemView;
+import java.io.FileReader;
+import java.io.IOException;
 
 //testing to see if this comment made it in
 public class dmanshw {
 
-	//the main array
+	// the main array
 	public static Stock[] stockList = new Stock[10];
-	
+
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
-		
-		//main logic
-		//create the pregenerated array of stocks
-		//create the stocks and add them to the array
-		stockList[0] = new Stock("Amazon", "AMZN",  1889.15, 3552.25, 3054.00);
-		stockList[1] = new Stock("Lululemon", "LULU", 177.77, 399.90, 311.16);
-		stockList[2] = new Stock("Tesla", "TSLA", 89.28, 900.40, 635.62);
-		stockList[3] = new Stock("Disney", "DIS", 92.56, 203.02, 185.54);
-		
-		//main loop that will allow the user to add a stock, get stats, and exit
-		
+
+		// main logic
+
+		// run the method to find the file that needs to be read from
+		importStocks();
+
+		// main loop that will allow the user to add a stock, get stats, and exit
 		int exit = 0;
-		while(exit == 0) {
-			
-			//ask the user what they want to do
-			Scanner in = new Scanner(System.in);
-			System.out.println("Please choose between the 3 options: 
-			\n0 - Add a stock to the database
-			\n1 - Get statistics about a stock
-			\n2 - Exit the program");
-			int userinput = in.nextInt();
-			
-			//switch statement to decide what to do
-			switch(userinput) {
+		while (exit == 0) {
+
+			/*
+			 * ask the user what they want to do
+			 * Scanner in = new Scanner(System.in);
+			 * System.out.println("Please choose between the 3 options:
+			 * \n0 - Add a stock to the database
+			 * \n1 - Get statistics about a stock
+			 * \n2 - Exit the program");
+			 * int userinput = in.nextInt();
+			 */
+
+			// trying to add joption as the user interface instead of just the console
+			// add the string to be shown
+
+			// get an answer from the user
+			String input = JOptionPane.showInputDialog(
+					"Please choose between the 3 options: \n0 - Add a stock to the database \n1 - Get statistics about a stock\n2 - Delete a stock\n3 - Exit the program\n\nPlease enter your choice: ");
+			int choice = Integer.parseInt(input);
+
+			// switch statement to decide what to do
+			switch (choice) {
 				case 0:
-					//add a stock to the database
+					// add a stock to the databasef
 					addStock(stockList);
 					break;
 
 				case 1:
-					//displays stats of a stock for the user
+					// displays stats of a stock for the user
 					displayStockStats(stockList);
 					break;
 
 				case 2:
-					//exit the program
-					System.out.println("Thank you for using the program!");
+					// this case will run the method to delete a stock from the database
+					deleteStock(stockList);
+					break;
+
+				case 3:
+					// this case will export the data in the array to an output file
+
+				case 4:
+					// exit the program
+					JOptionPane.showMessageDialog(null, "Thank you for using the program! ");
 					exit = 1;
 					break;
 
@@ -54,146 +79,277 @@ public class dmanshw {
 			}
 		}
 	}
-	
-	//method to add stock to stocklist
-	public static void addStock(Stock[] arr) {
-		//check to make sure the array isnt full
-		if(arr.length > 10)
-		{
-			//cant do anything because array is full
-			System.out.println("Sorry the database is currently full, please try something else.");
-		}else {
-			//get the information from the user
-			Scanner input = new Scanner(System.in);
-			
-			System.out.println("Please enter the name of the stock: ");
-			String tempName = input.nextLine();
-			
-			System.out.println("Please enter the symbol of the stock: ");
-			String tempSymbol = input.nextLine();
-			
-			System.out.println("Please enter the last recorded price of the stock: ");
-			double tempLastPrice = input.nextDouble();
-			
-			System.out.println("Please enter the highest recorded price in the past year of the stock: ");
-			double tempHighPrice = input.nextDouble();
-			
-			System.out.println("Please enter the lowest recorded price in the past year of the stock: ");
-			double tempLowPrice = input.nextDouble();
-			
-			//build the stock
-			Stock tempStock = new Stock(tempName, tempSymbol, tempLowPrice, tempHighPrice, tempLastPrice);
-			
-			//add it to the array, the first instance of the array having a null index
-			for(int i = 0; i < arr.length - 1; i++)
-			{
-				//find an index that is null
-				if(arr[i] == null) {
-					//add the stock that was created to this array
-					arr[i] = tempStock;
-					System.out.println("the stock was added");
+
+	// proper method for getting integer inputs
+	public static int getIntegerInput(boolean lowerLimitFlag, int lowerLimit, boolean upperLimitFlag,
+			int upperLimit, String prompt, String errorMsg) {
+
+		boolean lowerLimitFlag1 = lowerLimitFlag;
+		int lowerLimit1;
+		boolean upperLimitFlag1 = upperLimitFlag;
+		int upperLimit1;
+		String prompt1 = prompt;
+		String errorMsg1 = errorMsg;
+		String input;
+		int temp = 0;
+		Boolean soso = true;
+
+		if (lowerLimitFlag1 == true) {
+			lowerLimit1 = lowerLimit;
+		}
+
+		if (upperLimitFlag == true) {
+			upperLimit1 = upperLimit;
+		}
+
+		while (soso) {
+
+			try {
+				input = JOptionPane.showInputDialog(prompt1);
+				int userInput = Integer.parseInt(input);
+				temp = userInput;
+
+				if (upperLimitFlag) {
+					if (temp > upperLimit) {
+						continue;
+
+					}
+				}
+				if (lowerLimitFlag) {
+					if (temp < lowerLimit) {
+						continue;
+					}
+				}
+				soso = false;
+				break;
+			} catch (NumberFormatException e) {
+				JOptionPane.showMessageDialog(null, errorMsg1);
+
+			} catch (Exception e) {
+
+			}
+		}
+		JOptionPane.showMessageDialog(null, "You entered: " + temp);
+		return 0;
+	}
+
+	// method to import the stock data from a file instead of hard coding it
+	public static void importStocks() {
+		// use j file chooser to find the file the user wants to read from, then import
+		// that as the stock data
+		JFileChooser jfc = new JFileChooser(FileSystemView.getFileSystemView().getHomeDirectory());
+
+		int returnValue = jfc.showOpenDialog(null);
+
+		if (returnValue == JFileChooser.APPROVE_OPTION) {
+			File selectedFile = jfc.getSelectedFile();
+
+			// now we have the file, read each line and split by comma into an array
+			// create a file Reder
+			try {
+				FileReader inStream = new FileReader(selectedFile);
+				BufferedReader fileReader = new BufferedReader(inStream);
+
+				// read the file and put each line into an array
+				String read;
+				while ((read = fileReader.readLine()) != null) {
+					// testing
+					System.out.println(read);
+
+					// split the line up
+					String[] section = read.split("\n");
+
+					// for loop to go through and grab each line from the array that holds the file
+					for (int j = 0; j < section.length; j++) {
+
+						//grab a line from section
+						String[] line = section[j].split(",");
+						// then set all of the array indexes to variables to construct a stock object
+						String name = line[0];
+
+						String symbol = line[1];
+
+						double lastPrice = Double.parseDouble(line[2]);
+
+						double yearLow = Double.parseDouble(line[3]);
+
+						double yearHigh = Double.parseDouble(line[4]);
+
+						// build the object
+						Stock temp = new Stock(name, symbol, yearLow, yearHigh, lastPrice);
+
+						// add the stock to the main stock array
+						for (int i = 0; i < stockList.length; i++) {
+							if (stockList[i] == null) {
+								stockList[i] = temp;
+							}
+						}
+					}
+				}
+			} catch (IOException e) {
+				e.printStackTrace();
+
+			}
+		}
+	}
+
+	// method to export the data from the array in to a file
+	public static void exportStocks(Stock[] arr) {
+
+	}
+
+	// method to delete a stock from the list
+	public static void deleteStock(Stock[] arr) {
+		// ask the user what stock they would like to delete
+		String name = JOptionPane.showInputDialog(null, "Please enter the symbol of the stock you would like to delete: ");
+
+		// check to make sure the database isnt empty
+		if (arr.length < 1) {
+			JOptionPane.showMessageDialog(null, "Sorry the database is completely empty, please try something else.");
+		} else {
+			// delete the stock from the database
+			for (int i = 0; i < arr.length; i++) {
+				// run if statment to match the symbols
+				if ((arr[i].symbol).equalsIgnoreCase(name)) {
+					// delete the stock from the database (set it to null)
+					arr[i] = null;
+					JOptionPane.showMessageDialog(null, "Successfully deleted " + name.toUpperCase());
+					break;
+				} else {
+					JOptionPane.showMessageDialog(null, "Sorry, that stock was not found.");
 					break;
 				}
 			}
 		}
 	}
-	
-	//method to check if a stock is in the main list
-	public static int isStockInList(Stock[] stockArray, String stocksymbol) 
-		{
-			//compare the stocksymbol to all of the symbols in the array, if there is a match return the index
-			int num = 0;
-			for(int i = 0; i < stockArry.length; i ++)
-			{
-				if(stockArray[i].getSymbol().equalsIgnoreCase(stocksymbol))
-				{
-					num = i;
+
+	// method to add stock to stocklist
+	public static void addStock(Stock[] arr) {
+		// check to make sure the array isnt full
+		if (arr.length > 10) {
+			// cant do anything because array is full
+			JOptionPane.showMessageDialog(null, "Sorry the database is currently full, please try something else.");
+		} else {
+
+			// joption version
+			String tempName = JOptionPane.showInputDialog(null, "Please enter the name of the stock: ");
+
+			String tempSymbol = JOptionPane.showInputDialog(null, "Please enter the symbol of the stock: ");
+
+			double tempLastPrice = Double
+					.parseDouble(JOptionPane.showInputDialog(null, "Please enter the last recorded price of the stock: "));
+
+			double tempHighPrice = Double.parseDouble(
+					JOptionPane.showInputDialog(null, "Please enter the highest recorded price in the past year of the stock: "));
+
+			double tempLowPrice = Double.parseDouble(
+					JOptionPane.showInputDialog(null, "Please enter the lowest recorded price in the past year of the stock: "));
+
+			// build the stock
+			Stock tempStock = new Stock(tempName, tempSymbol, tempLowPrice, tempHighPrice, tempLastPrice);
+
+			// add it to the array, the first instance of the array having a null index
+			for (int i = 0; i < arr.length - 1; i++) {
+				// find an index that is null
+				if (arr[i] == null) {
+					// add the stock that was created to this array
+					arr[i] = tempStock;
+					JOptionPane.showMessageDialog(null, "The stock was added to the database.");
+					break;
 				}
 			}
-			
-			return num;
-				
 		}
-	
-	//method to display stock stats
+	}
+
+	// method to check if a stock is in the main list
+	public static int isStockInList(Stock[] stockArray, String stocksymbol) {
+		// compare the stocksymbol to all of the symbols in the array, if there is a
+		// match return the index
+		int num = 0;
+		for (int i = 0; i < stockArry.length; i++) {
+			if (stockArray[i].getSymbol().equalsIgnoreCase(stocksymbol)) {
+				num = i;
+			}
+		}
+
+		return num;
+
+	}
+
+	// method to display stock stats
 	public static void displayStockStats(Stock[] arr) {
-		//display all of the stats for that stock
-		
-		//ask what stock they want to see information for
-		System.out.println("What stock are you interested in? Please enter the symbol");
-		Scanner input = new Scanner(System.in);
-		String next = input.nextLine();
-		
-		//find that stock in the array
-		for(Stock x : arr) {
-			if(x.getSymbol().equalsIgnoreCase(next)) {
-				//ask the user for the current price of the stock
-				System.out.println("What is the current price of this stock?");
-				double next1 = input.nextDouble();
-				
-				//display the information to the user
-				System.out.println("Stock stats for " + x.getName() + 
-						":\n\nCurrent Price: " + next1 + 
-						"\nLast Recorded Price: " + x.getLastPrice() + 
-						"\nLast Year High: " + x.getYearHigh() + 
-						"\nLast Year Low: " +x.getYearLow());
-				
-				//set the current price as the last recorded price
+		// display all of the stats for that stock
+
+		// ask what stock they want to see information for
+		String next = JOptionPane.showInputDialog(null, "What stock are you interested in? Please enter the symbol: ");
+
+		// find that stock in the array
+		for (Stock x : arr) {
+			if (x.getSymbol().equalsIgnoreCase(next)) {
+				// ask the user for the current price of the stock
+				double next1 = Double
+						.parseDouble(JOptionPane.showInputDialog(null, "What is the current price of this stock? "));
+
+				// display the information to the user
+				JOptionPane.showMessageDialog(null, "Stock stats for " + x.getName() +
+						":\n\nCurrent Price: " + next1 +
+						"\nLast Recorded Price: " + x.getLastPrice() +
+						"\nLast Year High: " + x.getYearHigh() +
+						"\nLast Year Low: " + x.getYearLow());
+
+				// set the current price as the last recorded price
 				x.setLastPrice(next1);
 				break;
 			}
 		}
 	}
-	
-	//stock class that is the main object
-	static class Stock
-	{
-		//data fields
+
+	// stock class that is the main object
+	static class Stock {
+		// data fields
 		private String name, symbol;
 		private double lastPrice, yearLow, yearHigh;
 		private int numStocks;
-		
-		//constructor
-		Stock(String name, String symbol, double yearLow, double yearHigh, double lastPrice)
-		{
+
+		// constructor
+		Stock(String name, String symbol, double yearLow, double yearHigh, double lastPrice) {
 			this.name = name;
 			this.symbol = symbol;
 			this.yearHigh = yearHigh;
 			this.yearLow = yearLow;
 			this.lastPrice = lastPrice;
 		}
-		
-		
-		//methods
-		
-		//getters
+
+		// methods
+
+		// getters
 		public String getName() {
 			return name;
 		}
-		
+
 		public String getSymbol() {
 			return symbol;
 		}
-		
+
 		public double getLastPrice() {
 			return lastPrice;
 		}
-		
+
 		public double getYearLow() {
 			return yearLow;
 		}
-		
+
 		public double getYearHigh() {
 			return yearHigh;
 		}
-		
+
 		public int getNumStocks() {
 			return numStocks;
 		}
-		
-		//set last price
+
+		// set last price
 		public void setLastPrice(double input) {
 			this.lastPrice = input;
-		}	
+		}
 	}
 }

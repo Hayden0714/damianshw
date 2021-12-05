@@ -162,7 +162,7 @@ public class dmanshw {
 					// for loop to go through and grab each line from the array that holds the file
 					for (int j = 0; j < section.length; j++) {
 
-						//grab a line from section
+						// grab a line from section
 						String[] line = section[j].split(",");
 						// then set all of the array indexes to variables to construct a stock object
 						String name = line[0];

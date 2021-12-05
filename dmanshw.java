@@ -10,6 +10,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import javax.swing.filechooser.FileSystemView;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 
 //testing to see if this comment made it in
@@ -44,9 +45,7 @@ public class dmanshw {
 			// add the string to be shown
 
 			// get an answer from the user
-			String input = JOptionPane.showInputDialog(
-					"Please choose between the 3 options: \n0 - Add a stock to the database \n1 - Get statistics about a stock\n2 - Delete a stock\n3 - Exit the program\n\nPlease enter your choice: ");
-			int choice = Integer.parseInt(input);
+			int choice = getIntegerInput(true, 0, true, 3, "Please choose between the 3 options: \n0 - Add a stock to the database \n1 - Get statistics about a stock\n2 - Export the stocks to a file\n3 - Exit the program\n\nPlease enter your choice: ", "That is not a valid input");
 
 			// switch statement to decide what to do
 			switch (choice) {
@@ -58,17 +57,15 @@ public class dmanshw {
 				case 1:
 					// displays stats of a stock for the user
 					displayStockStats(stockList);
+
 					break;
 
 				case 2:
-					// this case will run the method to delete a stock from the database
-					deleteStock(stockList);
+					// this case will export the data in the array to an output file
+					exportStocks(stockList);
 					break;
 
 				case 3:
-					// this case will export the data in the array to an output file
-
-				case 4:
 					// exit the program
 					JOptionPane.showMessageDialog(null, "Thank you for using the program! ");
 					exit = 1;
@@ -129,8 +126,7 @@ public class dmanshw {
 
 			}
 		}
-		JOptionPane.showMessageDialog(null, "You entered: " + temp);
-		return 0;
+		return temp;
 	}
 
 	// method to import the stock data from a file instead of hard coding it
@@ -154,54 +150,98 @@ public class dmanshw {
 				String read;
 				while ((read = fileReader.readLine()) != null) {
 					// testing
-					System.out.println(read);
+					System.out.println("The line that is being read in is: " + read);
 
 					// split the line up
-					String[] section = read.split("\n");
+					String[] line = read.split(",");
 
-					// for loop to go through and grab each line from the array that holds the file
-					for (int j = 0; j < section.length; j++) {
+					// trim all of the whitespace from the strings
+					for (String x : line) {
+						x = x.trim();
+					}
 
-						// grab a line from section
-						String[] line = section[j].split(",");
-						// then set all of the array indexes to variables to construct a stock object
-						String name = line[0];
+					// get rid of any whitespaces present in the beginning of the string
+					for (String y : line) {
+						y = y.strip();
+					}
 
-						String symbol = line[1];
+					// then set all of the array indexes to variables to construct a stock object
+					String name = line[0].trim();
+					System.out.println(name);
 
-						double lastPrice = Double.parseDouble(line[2]);
+					String symbol = line[1].trim();
+					System.out.println(symbol);
+					double lastPrice = Double.parseDouble(line[2].trim());
 
-						double yearLow = Double.parseDouble(line[3]);
+					double yearLow = Double.parseDouble(line[3].trim());
 
-						double yearHigh = Double.parseDouble(line[4]);
+					double yearHigh = Double.parseDouble(line[4].trim());
 
-						// build the object
-						Stock temp = new Stock(name, symbol, yearLow, yearHigh, lastPrice);
+					// build the object
+					Stock temp = new Stock(name, symbol, yearLow, yearHigh, lastPrice);
 
-						// add the stock to the main stock array
-						for (int i = 0; i < stockList.length; i++) {
-							if (stockList[i] == null) {
-								stockList[i] = temp;
-							}
+					// add the stock to the main stock array
+					for (int i = 0; i < stockList.length; i++) {
+						if (stockList[i] == null) {
+							stockList[i] = temp;
+
+							break;
 						}
 					}
 				}
+
 			} catch (IOException e) {
 				e.printStackTrace();
 
 			}
 		}
+
+		// print the stock list to test if everything is there
+		/*
+		 * for(Stock var : stockList)
+		 * {
+		 * System.out.println("name of the stock is: " + var.name);
+		 * System.out.println("symbol of the stock is: " + var.symbol);
+		 * System.out.println("last price of the stock is" + var.lastPrice);
+		 * System.out.println("highprice of the stock is " + var.yearHigh);
+		 * System.out.println("lowprice of the stock is" + var.yearLow);
+		 * }
+		 */
 	}
 
 	// method to export the data from the array in to a file
 	public static void exportStocks(Stock[] arr) {
+		try {
+			// create the file that we will write too
+			File exportFile = new File("stocks.txt");
 
+			// create the filewriter
+			FileWriter writer = new FileWriter(exportFile);
+
+			// now go through each index of the array and write it to a file in the same
+			// format
+			// as the input file
+
+			for (Stock x : stockList) {
+				// write each element of the stock to the file separated by a comma and a space
+				writer.write(x.getName() + ", " + x.getSymbol() + ", " + x.getLastPrice() + ", " + x.getYearLow() + ", "
+						+ x.getYearHigh());
+
+				// DO THE SAME THING WITH PRINT OUT TO TEST
+				System.out.println(x.name + ", " + x.symbol + ", " + x.lastPrice + ", " + x.yearLow + ", " + x.yearHigh);
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}catch (NullPointerException n){
+			n.printStackTrace();
+		}
 	}
 
 	// method to delete a stock from the list
 	public static void deleteStock(Stock[] arr) {
 		// ask the user what stock they would like to delete
-		String name = JOptionPane.showInputDialog(null, "Please enter the symbol of the stock you would like to delete: ");
+		String symbol = JOptionPane.showInputDialog(null,
+				"Please enter the symbol of the stock you would like to delete: ");
 
 		// check to make sure the database isnt empty
 		if (arr.length < 1) {
@@ -210,10 +250,10 @@ public class dmanshw {
 			// delete the stock from the database
 			for (int i = 0; i < arr.length; i++) {
 				// run if statment to match the symbols
-				if ((arr[i].symbol).equalsIgnoreCase(name)) {
+				if ((arr[i].symbol).equalsIgnoreCase(symbol)) {
 					// delete the stock from the database (set it to null)
 					arr[i] = null;
-					JOptionPane.showMessageDialog(null, "Successfully deleted " + name.toUpperCase());
+					JOptionPane.showMessageDialog(null, "Successfully deleted " + symbol.toUpperCase());
 					break;
 				} else {
 					JOptionPane.showMessageDialog(null, "Sorry, that stock was not found.");
@@ -285,6 +325,7 @@ public class dmanshw {
 
 		// find that stock in the array
 		for (Stock x : arr) {
+
 			if (x.getSymbol().equalsIgnoreCase(next)) {
 				// ask the user for the current price of the stock
 				double next1 = Double
